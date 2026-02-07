@@ -1,0 +1,379 @@
+/* =========================
+   RESET + VARIÁVEIS
+========================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #0b1220;
+  --panel: rgba(0,0,0,.65);
+  --text: #e6edf3;
+  --text-soft: rgba(230,237,243,.75);
+
+  --btn: rgba(255,255,255,.10);
+  --btn-hover: rgba(255,255,255,.16);
+  --border: rgba(255,255,255,.10);
+
+  --accent: #00ff88;
+  --accent-alt: #ffcc00;
+}
+
+/* =========================
+   BODY
+========================= */
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+
+  display: flex;
+  flex-direction: column;
+
+  /* cursor falso */
+  cursor: none;
+}
+
+/* =========================
+   HEADER
+========================= */
+.topo {
+  width: 100%;
+  padding: 18px 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  letter-spacing: .4px;
+}
+
+.logo img {
+  width: 26px;
+  height: 26px;
+  image-rendering: pixelated;
+}
+
+.acoes {
+  display: flex;
+  gap: 10px;
+}
+
+/* =========================
+   BOTÕES
+========================= */
+.btn {
+  border: 1px solid var(--border);
+  background: var(--btn);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+
+  font-weight: 600;
+
+  transition: transform .15s, background-color .15s, border-color .15s;
+}
+
+.btn:hover {
+  background: var(--btn-hover);
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: scale(.98);
+}
+
+/* =========================
+   LAYOUT PRINCIPAL
+========================= */
+.layout {
+  /* width: min(1100px, 92vw);
+  margin: 0 auto;
+
+  flex: 1;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 18px;
+
+  padding: 10px 0 24px; */  
+  width: 100%;
+  flex: 1;
+
+  display: grid;
+  grid-template-columns: 320px 1fr 320px;
+  gap: 0;
+
+  padding: 10px 0 24px;
+}
+
+/* =========================
+   PAINEL LATERAL
+========================= */
+.painel {
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  border-radius: 0 16px 16px 0;
+  padding: 16px;
+  height: fit-content;
+}
+
+.painel h2 {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+.painel p {
+  margin: 10px 0;
+}
+
+#turno,
+#peca-selecionada {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.dica {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--text-soft);
+  line-height: 1.35;
+}
+
+.game-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================
+   TABULEIRO
+========================= */
+.board{
+  width: min(560px, 92vw);
+  aspect-ratio: 1 / 1;
+
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr); /* ✅ ISSO resolve o estica/compacta */
+
+  border-radius: 16px;
+  overflow: hidden;
+  border: 3px solid rgba(255,255,255,.15);
+
+  image-rendering: pixelated;
+}
+
+
+.cell{
+  min-width: 0;   /* ✅ impede conteúdo forçar largura */
+  min-height: 0;  /* ✅ impede conteúdo forçar altura */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+  overflow: hidden;
+}
+
+/* Tiles do tabuleiro */
+.cell.light {
+  background: url("assets/board/tile_light.png") center/cover no-repeat;
+  background-size: 100% 100%; /* encaixa exatamente na célula */
+  image-rendering: pixelated;
+}
+
+.cell.dark {
+  background: url("assets/board/tile_dark.png") center/cover no-repeat;
+  background-size: 100% 100%; /* encaixa exatamente na célula */
+  image-rendering: pixelated;
+}
+
+/* =========================
+   PEÇAS (PIXEL ART)
+========================= */
+.piece {
+  width: 100%;
+  height: 100%;
+
+  display: grid;
+  place-items: center;
+
+  pointer-events: none;
+}
+
+.piece::before{
+  content: "";
+  width: 86%;
+  height: 86%;
+
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  image-rendering: pixelated;
+
+  /* ✅ puxa um pouco pra cima pra centralizar o "corpo" */
+  transform: translate(5%,-1%);
+
+  animation: pieceBob var(--bobDur, 1.8s) ease-in-out var(--bobDelay, 0s) infinite;
+}
+
+.piece.black::before {
+  animation-duration: 2s;
+  transform: translateY(calc(var(--cellSize) * -0.06 + var(--yFix, 0px)));
+}
+
+@keyframes pieceBob {
+  0%, 100% {
+    transform: translate(5%, -1%);
+  }
+  50% {
+    transform: translate(
+      5%,
+      calc(-1% - var(--bobAmp, 5px))
+    );
+  }
+}
+
+
+/* Brancas */
+.piece.w-pawn::before   { background-image: url("assets/pieces/w_pawn.png"); }
+.piece.w-rook::before   { background-image: url("assets/pieces/w_rook.png"); }
+.piece.w-knight::before { background-image: url("assets/pieces/w_knight.png"); }
+.piece.w-bishop::before { background-image: url("assets/pieces/w_bishop.png"); }
+.piece.w-queen::before  { background-image: url("assets/pieces/w_queen.png"); }
+.piece.w-king::before   { background-image: url("assets/pieces/w_king.png"); }
+
+/* Pretas */
+.piece.b-pawn::before   { background-image: url("assets/pieces/b_pawn.png"); }
+.piece.b-rook::before   { background-image: url("assets/pieces/b_rook.png"); }
+.piece.b-knight::before { background-image: url("assets/pieces/b_knight.png"); }
+.piece.b-bishop::before { background-image: url("assets/pieces/b_bishop.png"); }
+.piece.b-queen::before  { background-image: url("assets/pieces/b_queen.png"); }
+.piece.b-king::before   { background-image: url("assets/pieces/b_king.png"); }
+
+.piece.w-knight::before,
+.piece.b-knight::before { transform: translateY(-8%); }
+
+.piece.w-king::before,
+.piece.b-king::before { transform: translateY(-7%); }
+
+/* .piece.w-knight, .piece.b-knight { --yFix: -2px; }
+.piece.w-king, .piece.b-king { --yFix: -1px; } */
+
+/* Peças altas (rei / rainha) */
+.piece.w-king,
+.piece.b-king,
+.piece.w-queen,
+.piece.b-queen {
+  --bobAmp: 1.5px;
+}
+
+/* Peças baixas (peão) */
+.piece.w-pawn,
+.piece.b-pawn {
+  --bobAmp: 2.5px;
+}
+
+/* =========================
+   INTERAÇÕES VISUAIS
+========================= */
+.cell.selected {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+}
+
+.cell.target {
+  box-shadow: inset 0 0 0 3px var(--accent-alt);
+}
+
+.cell.selected .piece::before {
+  animation: none;
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* =========================
+   CURSORES (USER + IA)
+========================= */
+.cursor{
+  position: fixed;
+  width: clamp(40px, 5.2vmin, 56px);
+  height: clamp(40px, 5.2vmin, 56px);
+
+  pointer-events: none;
+  z-index: 9999;
+
+  background-repeat: no-repeat;
+  background-size: contain;
+
+  image-rendering: pixelated;
+  transform: translate(-6px, -6px);
+}
+/* User */
+#cursor-user.idle { background-image: url("assets/cursor/user_idle.png"); }
+#cursor-user.grab { background-image: url("assets/cursor/user_grab.png"); }
+#cursor-user.hold { background-image: url("assets/cursor/user_hold.png"); }
+#cursor-user.drop { background-image: url("assets/cursor/user_drop.png"); }
+
+/* AI */
+#cursor-ai.idle { background-image: url("assets/cursor/ai_idle.png"); }
+#cursor-ai.grab { background-image: url("assets/cursor/ai_grab.png"); }
+#cursor-ai.hold { background-image: url("assets/cursor/ai_hold.png"); }
+#cursor-ai.drop { background-image: url("assets/cursor/ai_drop.png"); }
+
+/* animação do cursor */
+@keyframes cursorBob {
+  0%,100% { transform: translate(-2px,-2px) translateY(0); }
+  50% { transform: translate(-2px,-2px) translateY(-2px); }
+}
+
+.cursor.moving {
+  animation: cursorBob .8s ease-in-out infinite;
+}
+
+/* =========================
+   FOOTER
+========================= */
+.rodape {
+  width: min(1100px, 92vw);
+  margin: 0 auto;
+  padding: 14px 0 18px;
+
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-soft);
+
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+/* =========================
+   RESPONSIVO
+========================= */
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .painel {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+  }
+
+  .game-area {
+    padding: 16px 0;
+  }
+}
+

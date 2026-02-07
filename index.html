@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xadrez Pixelado - Jeryel</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header class="topo">
+        <h1 class="logo"> <img src="assets/pieces/w_queen.png"> Xadrez</h1>
+
+        <div class="acoes">
+            <button class="btn" id="btn-reset">Reiniciar</button>
+            <button class="btn" id="btn-tema">Tema</button>
+        </div>
+
+    </header>
+
+    <main class="layout">        
+        <section class="painel">
+            <h2>Status</h2>
+            <p><strong>Turno:</strong> <span id="turno">Brancas</span></p>
+            <p><strong>Peça selecionada:</strong> <span id="peca-selecionada">-</span></p>
+            <p class="dica">Clique em uma peça para selecioná-la, depois numa casa para mover.</p>
+
+        </section>
+        <section class="game-area">
+        <!-- TABULEIRO AQUI -->
+            <div class="board" id="board"></div>
+        </section>
+
+        <section></section> <!-- espaço vazio para manter o layout alinhado -->
+
+    </main>
+
+    <footer class="rodape">
+        <small>Feito por Jeryel A Silva • HTML/CSS/JS</small>        
+    </footer>
+    <script src="scripts.js"></script>
+
+</body>
+</html>
