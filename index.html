@@ -6,16 +6,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xadrez Pixelado - Jeryel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
     <header class="topo">
-        <h1 class="logo"> <img src="assets/pieces/w_queen.png"> Xadrez v.01</h1>
+        <h1 class="logo"> <img src="assets/pieces/w_queen.png"> 
+            <span>Xadrez v.01</span>
+        </h1>
 
         <div class="acoes">
-            <button class="btn" id="btn-reset">Reiniciar</button>
-            <button class="btn" id="btn-tema">Tema</button>
+            <button class="btn btn-icon" id="btn-reset">
+                <img src="assets/buttons/retry_b.png" alt="Reiniciar">
+            </button>
+            <button class="btn btn-icon" id="btn-tema">
+                <img id="tema-icone" src="assets/buttons/moon.png" alt="Tema">
+            </button>
         </div>
 
     </header>
