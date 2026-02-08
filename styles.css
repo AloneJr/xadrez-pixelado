@@ -8,7 +8,7 @@
 }
 
 :root {
-  --bg: #0b1220;
+  --bg-img: url("assets/bg/background.png");
   --panel: rgba(0,0,0,.65);
   --text: #e6edf3;
   --text-soft: rgba(230,237,243,.75);
@@ -27,7 +27,7 @@
 body {
   min-height: 100vh;
   background-color: var(--bg);
-  background-image: url("assets/bg/background.png");
+  background-image: var(--bg-img);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -37,6 +37,10 @@ body {
   flex-direction: column;
   /* cursor falso */
   cursor: none;
+}
+
+body.dark{
+  --bg-img: url("assets/bg/background_d.png");
 }
 
 /* =========================
@@ -50,7 +54,65 @@ body {
   align-items: center;
   justify-content: space-between;
 
-  border-bottom: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba(255,255,255,.10);
+}
+
+.titulo{
+  font-family: 'Press Start 2P', monospace;
+  font-size: 16px;
+  letter-spacing: 1px;
+  line-height: 1.2;
+  color: #ffffff;
+  text-shadow:
+    0 2px 0 rgba(0,0,0,.7),
+    0 0 12px rgba(0,0,0,.6);
+}
+
+.titulo,
+.painel h2,
+.btn{
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.btn-icon{
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+
+  width: auto;
+  height: auto;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: none; /* garante que o cursor real não apareça */
+}
+
+.btn-icon img{
+  width: 32px;   /* ajuste aqui se quiser maior/menor */
+  height: 32px;
+
+  image-rendering: pixelated;
+  pointer-events: none; /* clique passa pro botão, não na imagem */
+  /* com isso o clique "bate" na imagem e não no botão */
+}
+
+.btn-icon:active img{
+  transform: scale(0.92);
+}
+
+
+.btn-icon:hover,
+.btn-icon:active,
+.btn-icon:focus{
+  background: none;
+  outline: none;
+  box-shadow: none;
 }
 
 .logo {
@@ -133,7 +195,8 @@ body {
 }
 
 .painel h2 {
-  font-size: 16px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
   margin-bottom: 12px;
 }
 
