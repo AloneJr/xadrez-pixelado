@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ----------------------------
   // Estado visual do tabuleiro
   // ----------------------------
-  const boardState = [
+  const INITIAL_BOARD = [
     ["r","n","b","q","k","b","n","r"],
     ["p","p","p","p","p","p","p","p"],
     ["","","","","","","",""],
@@ -15,6 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
     ["P","P","P","P","P","P","P","P"],
     ["R","N","B","Q","K","B","N","R"],
   ];
+
+  let boardState = INITIAL_BOARD.map(row => row.slice());
 
   // ----------------------------
   // Helpers
@@ -67,6 +69,35 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   }
+
+  // ----------------------------
+// Botão reset
+// ----------------------------
+const btnReset = document.querySelector("#btn-reset");
+btnReset?.addEventListener("click", () => {
+  // se estiver segurando peça, cancela
+  if (holding) cancelHoldRestore();
+
+  boardState = INITIAL_BOARD.map(row => row.slice());
+  renderBoard();
+  setCursor("idle");
+});
+
+// ----------------------------
+// Botão tema (lua/sol + background)
+// ----------------------------
+const btnTema = document.querySelector("#btn-tema");
+const temaIcone = document.querySelector("#tema-icone");
+
+btnTema?.addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+
+  const isDark = document.body.classList.contains("dark");
+  if (temaIcone) {
+    temaIcone.src = isDark ? "assets/buttons/sun.png" : "assets/buttons/moon.png";
+    temaIcone.alt = isDark ? "Tema claro" : "Tema escuro";
+  }
+});
 
   // ----------------------------
   // Cursor falso (user)
