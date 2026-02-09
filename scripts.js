@@ -54,8 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const piece = boardState[r][c];
         if (piece) {
           const pieceEl = document.createElement("div");
-          pieceEl.className =
-            "piece " + pieceToClass(piece) + (isWhite(piece) ? "" : " black");
+          pieceEl.className = "piece " + pieceToClass(piece) + (isWhite(piece) ? "" : " black");
 
           // random suave (balanço)
           pieceEl.style.setProperty("--bobDur", (1.6 + Math.random() * 0.9).toFixed(2) + "s");
@@ -69,35 +68,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   }
-
-  // ----------------------------
-// Botão reset
-// ----------------------------
-const btnReset = document.querySelector("#btn-reset");
-btnReset?.addEventListener("click", () => {
-  // se estiver segurando peça, cancela
-  if (holding) cancelHoldRestore();
-
-  boardState = INITIAL_BOARD.map(row => row.slice());
-  renderBoard();
-  setCursor("idle");
-});
-
-// ----------------------------
-// Botão tema (lua/sol + background)
-// ----------------------------
-const btnTema = document.querySelector("#btn-tema");
-const temaIcone = document.querySelector("#tema-icone");
-
-btnTema?.addEventListener("click", () => {
-  document.body.classList.toggle("dark");
-
-  const isDark = document.body.classList.contains("dark");
-  if (temaIcone) {
-    temaIcone.src = isDark ? "assets/buttons/sun.png" : "assets/buttons/moon.png";
-    temaIcone.alt = isDark ? "Tema claro" : "Tema escuro";
-  }
-});
 
   // ----------------------------
   // Cursor falso (user)
@@ -119,9 +89,9 @@ btnTema?.addEventListener("click", () => {
   // “Pick & Drop” visual
   // ----------------------------
   let holding = false;
-  let heldPiece = "";   // letra (P, p, etc)
-  let fromPos = null;   // {r,c}
-  let floating = null;  // elemento flutuante
+  let heldPiece = "";
+  let fromPos = null;
+  let floating = null;
   let lastMouse = { x: 0, y: 0 };
 
   function getCellFromEventTarget(target) {
@@ -138,27 +108,6 @@ btnTema?.addEventListener("click", () => {
     return hasPieceAt(r, c);
   }
 
-  function createFloatingPiece(pieceChar, startX, startY, cellSize) {
-    const el = document.createElement("div");
-    el.className = "floating-piece";
-
-    // tamanho proporcional à célula (igual ao CSS 86%)
-    const size = Math.floor(cellSize * 0.86);
-    el.style.width = size + "px";
-    el.style.height = size + "px";
-
-    // imagem da peça: usa o PNG já existente
-    const cls = pieceToClass(pieceChar); // ex: w-queen
-    el.style.backgroundImage = `url("assets/pieces/${cls.replace("-", "_")}.png")`;
-
-    el.style.left = startX + "px";
-    el.style.top = startY + "px";
-
-    document.body.appendChild(el);
-    return el;
-  }
-
-  // Converte "w-queen" => "w_queen.png" (mesmo padrão dos seus assets)
   function pieceClassToFile(pieceChar) {
     const cls = pieceToClass(pieceChar); // w-queen
     return `${cls.replace("-", "_")}.png`; // w_queen.png
@@ -183,6 +132,7 @@ btnTema?.addEventListener("click", () => {
     const { x, y, size } = cellCenter(cellEl);
     floating = document.createElement("div");
     floating.className = "floating-piece";
+
     const px = Math.floor(size * 0.86);
     floating.style.width = px + "px";
     floating.style.height = px + "px";
@@ -220,7 +170,7 @@ btnTema?.addEventListener("click", () => {
     const r = Number(cellEl.dataset.r);
     const c = Number(cellEl.dataset.c);
 
-    // só solta em casa vazia (como você pediu)
+    // só solta em casa vazia
     if (boardState[r][c]) return;
 
     setCursor("drop");
@@ -228,20 +178,17 @@ btnTema?.addEventListener("click", () => {
     // alvo da animação (centro da casa destino)
     const { x: tx, y: ty } = cellCenter(cellEl);
 
-    // anima a peça flutuante até o alvo
+    // anima até o alvo
     floating.classList.add("dropping");
     floating.style.left = tx + "px";
     floating.style.top = ty + "px";
 
-    // após animação, atualiza o estado e re-renderiza
     const finish = () => {
       floating?.removeEventListener("transitionend", finish);
 
-      // move no "estado"
       boardState[fromPos.r][fromPos.c] = "";
       boardState[r][c] = heldPiece;
 
-      // limpa
       floating?.remove();
       floating = null;
 
@@ -266,13 +213,13 @@ btnTema?.addEventListener("click", () => {
     cursorUser.style.left = e.clientX + "px";
     cursorUser.style.top = e.clientY + "px";
 
-    // se segurando, peça flutuante segue o mouse (sem transição)
+    // se segurando, peça flutuante segue o mouse
     if (holding && floating && !floating.classList.contains("dropping")) {
       floating.style.left = e.clientX + "px";
       floating.style.top = e.clientY + "px";
     }
 
-    // estado do cursor quando NÃO está segurando
+    // cursor: grab quando passa por peça
     if (!holding) {
       const el = document.elementFromPoint(e.clientX, e.clientY);
       const cell = el?.closest?.(".cell");
@@ -290,19 +237,150 @@ btnTema?.addEventListener("click", () => {
     const c = Number(cell.dataset.c);
 
     if (!holding) {
-      // pegar se tiver peça
       if (boardState[r][c]) pickFromCell(cell);
       return;
     }
 
-    // segurando: solta se vazio, senão ignora
     if (!boardState[r][c]) dropToCell(cell);
   });
 
-  // Escape cancela “hold” (útil pra debug)
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && holding) cancelHoldRestore();
   });
+
+  // ==================================================
+  // UI: Reset / Tema / Easter Egg Terraria
+  // ==================================================
+
+  const btnReset = document.querySelector("#btn-reset");
+  const btnTema = document.querySelector("#btn-tema");
+  const temaIcone = document.querySelector("#tema-icone");
+
+  // flag: se arrastou, não troca tema no click
+  let temaDraggedRecently = false;
+
+  // Easter egg: só 1 vez até reset/reload
+  let eggSpawned = false;
+
+  function isSunShowing() {
+    // checa se o ícone atual é o sol
+    return !!temaIcone && temaIcone.src.includes("sun.png");
+  }
+
+  function spawnTerrariaEggOnce() {
+    if (eggSpawned) return;
+    eggSpawned = true;
+
+    const tree = document.createElement("img");
+    tree.src = "assets/bg/e_tree.png";
+    tree.alt = "Terraria easter egg";
+    tree.className = "e-tree";
+
+    const tip = document.createElement("div");
+    tip.className = "e-tree-tooltip";
+    tip.textContent = "Entendeu a referência?";
+
+    document.body.appendChild(tree);
+    document.body.appendChild(tip);
+
+    const audio = new Audio("assets/sfx/toasty_egg.mp3");
+    audio.volume = 0.8;
+    audio.play().catch(() => {});
+  }
+
+  function removeTerrariaEgg() {
+    document.querySelectorAll(".e-tree, .e-tree-tooltip").forEach(el => el.remove());
+    eggSpawned = false;
+  }
+
+  // Reset: volta board e remove egg
+  btnReset?.addEventListener("click", () => {
+    if (holding) cancelHoldRestore();
+    removeTerrariaEgg();
+
+    boardState = INITIAL_BOARD.map(row => row.slice());
+    renderBoard();
+    setCursor("idle");
+  });
+
+  // Clique no tema: só troca se NÃO houve drag
+  btnTema?.addEventListener("click", () => {
+    if (temaDraggedRecently) {
+      temaDraggedRecently = false;
+      return;
+    }
+
+    document.body.classList.toggle("dark");
+    const isDark = document.body.classList.contains("dark");
+
+    if (temaIcone) {
+      temaIcone.src = isDark ? "assets/buttons/sun.png" : "assets/buttons/moon.png";
+      temaIcone.alt = isDark ? "Tema claro" : "Tema escuro";
+    }
+  });
+
+  // Drag do botão tema: funciona com sol OU lua
+  let draggingTema = false;
+  let dragStarted = false;
+  let startX = 0, startY = 0;
+
+  function beginDragTema(e) {
+    draggingTema = true;
+    dragStarted = false;
+    temaDraggedRecently = false;
+
+    btnTema.classList.remove("returning");
+    btnTema.classList.add("dragging");
+
+    const p = e.touches ? e.touches[0] : e;
+    startX = p.clientX;
+    startY = p.clientY;
+  }
+
+  function moveDragTema(e) {
+    if (!draggingTema) return;
+
+    const p = e.touches ? e.touches[0] : e;
+    const dx = p.clientX - startX;
+    const dy = p.clientY - startY;
+
+    // Só vira "drag de verdade" depois do threshold
+    if (!dragStarted && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) {
+      dragStarted = true;
+      temaDraggedRecently = true;
+
+      // ✅ Easter egg acontece APENAS quando estiver com o SOL
+      if (isSunShowing()) spawnTerrariaEggOnce();
+    }
+
+    btnTema.style.transform = `translate(${dx}px, ${dy}px)`;
+
+    if (e.cancelable) e.preventDefault();
+  }
+
+  function endDragTema() {
+    if (!draggingTema) return;
+    draggingTema = false;
+
+    btnTema.classList.remove("dragging");
+    btnTema.classList.add("returning");
+    btnTema.style.transform = `translate(0px, 0px)`;
+
+    setTimeout(() => btnTema.classList.remove("returning"), 240);
+
+    // evita click fantasma
+    setTimeout(() => { temaDraggedRecently = false; }, 0);
+  }
+
+  if (btnTema) {
+    btnTema.addEventListener("mousedown", beginDragTema);
+    window.addEventListener("mousemove", moveDragTema);
+    window.addEventListener("mouseup", endDragTema);
+
+    btnTema.addEventListener("touchstart", beginDragTema, { passive: false });
+    window.addEventListener("touchmove", moveDragTema, { passive: false });
+    window.addEventListener("touchend", endDragTema);
+  }
 
   // ----------------------------
   // Start
