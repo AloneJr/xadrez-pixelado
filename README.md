@@ -60,7 +60,7 @@ git clone https://github.com/alonejr/xadrez-pixelado.git
 ```
 2. Entre na pasta do projeto
 ```bash
-cd nome-do-repositorio
+cd xadrez-pixelado
 ```
 3. Abra o arquivo index.html no seu navegador de preferência ou pelo LiveServer do VSCode
 
