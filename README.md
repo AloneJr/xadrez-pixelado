@@ -56,11 +56,11 @@ Este projeto está em constante evolução. As próximas etapas de desenvolvimen
 
 1. Clone o repositório:
 ```bash
-git clone [https://github.com/alonejr/xadrez-pixelado.git](https://github.com/alonejr/xadrez-pixelado.git)
-
+git clone https://github.com/alonejr/xadrez-pixelado.git
+```
 2. Entre na pasta do projeto
-
-cd nome-do-repositorio
+```bash
+cd xadrez-pixelado
 ```
 3. Abra o arquivo index.html no seu navegador de preferência ou pelo LiveServer do VSCode
 
