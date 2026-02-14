@@ -9,6 +9,11 @@
 
 ---
 
+## 🖼️ Preview
+![Screenshot do Projeto](./assets/cover.png)
+
+---
+
 ## 📝 Sobre o Projeto
 
 Este projeto é parte do meu portfólio de **Desenvolvedor Front-end**. O objetivo principal é solidificar conhecimentos em lógica de programação complexa, fugindo dos projetos "padrão" e enfrentando desafios reais de controle de estado e regras de negócio.
